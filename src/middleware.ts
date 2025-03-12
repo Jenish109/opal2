@@ -1,24 +1,3 @@
-// import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
-
-// const allowedOrigins = ['http://localhost:5173', 'http://localhost:3000']
-
-// const isProtectedRoutes = createRouteMatcher(['/dashboard(.*)', '/payment(.*)'])
-// export default clerkMiddleware(async (auth, req) => {
-//   if (isProtectedRoutes(req)) {
-//     auth().protect()
-//   }
-// })
-
-// export const config = {
-//   matcher: [
-//     // Skip Next.js internals and all static files, unless found in search params
-//     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-//     // Always run for API routes
-//     '/(api|trpc)(.*)',
-//   ],
-// }
-
-
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
@@ -30,7 +9,16 @@ const corsOptions = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 }
 
+// Explicitly define protected routes
 const isProtectedRoutes = createRouteMatcher(['/dashboard(.*)', '/payment(.*)'])
+
+// Explicitly define public routes - THIS IS THE KEY ADDITION
+const isPublicRoutes = createRouteMatcher([
+  '/auth/sign-in(.*)',  // Make sure sign-in routes are public
+  '/auth/sign-up(.*)',  // If you have a sign-up route
+  '/auth/callback(.*)', // Your auth callback route
+  '/'                   // Homepage
+])
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
   const origin = req.headers.get('origin') ?? ''
@@ -45,8 +33,12 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     return NextResponse.json({}, { headers: preflightHeaders })
   }
 
-  // Handle protected routes
-  if (isProtectedRoutes(req)) {
+  // Check if this is a public route first
+  if (isPublicRoutes(req)) {
+    // Allow access to public routes without authentication
+  } 
+  // Then check if it's a protected route
+  else if (isProtectedRoutes(req)) {
     auth().protect()
   }
 

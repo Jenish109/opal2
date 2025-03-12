@@ -23,12 +23,12 @@ export default async function EmbedPage({ params }: EmbedPageProps) {
   }
 
   // Construct video URL from S3 key
-  const videoUrl = `${process.env.NEXT_PUBLIC_CDN_URL}/${video.source}`
+  // const videoUrl = `${process.env.NEXT_PUBLIC_CDN_URL}/${video.source}`
 
   return (
     <div className="w-full h-screen bg-black">
       <VideoPlayer
-        src={videoUrl}
+        src={video.source}
         poster={video.thumbnail || undefined}
         videoId={video.id}
         callToAction={video.callToAction || undefined}

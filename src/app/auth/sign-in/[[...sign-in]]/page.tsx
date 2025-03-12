@@ -4,7 +4,7 @@ import { SignIn } from '@clerk/nextjs'
 type Props = {}
 
 const SignInPage = (props: Props) => {
-  return <SignIn />
+  return <SignIn routing="hash" />
 }
 
 export default SignInPage

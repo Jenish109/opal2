@@ -179,8 +179,8 @@ model VideoAnalytics {
 
 model CallToAction {
   id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  videoId       String   @unique @db.Uuid
   video         Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
-  videoId       String   @db.Uuid
   buttonText    String
   buttonLink    String
   buttonColor   String   @default("#000000")
